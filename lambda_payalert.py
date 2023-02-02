@@ -1,0 +1,100 @@
+import urllib3
+import pandas as pd
+import json
+import os
+http = urllib3.PoolManager()
+
+gsheetid = os.environ["gsheetid"]
+
+def mydoc():
+	sheet_name = "Sheet1"
+
+	gsheet_url = "https://docs.google.com/spreadsheets/d/{}/gviz/tq?tqx=out:csv&sheet={}".format(gsheetid, sheet_name)
+	df = pd.read_csv(gsheet_url)
+
+	current_week = (df.loc[0])
+
+	for i in df.index:
+		if df.loc[i]['Total Pay'] == None:
+			raise Exception("Something went wrong in parsing the Pandas from Excel sheet!")
+
+		if not pd.isna(df.loc[i]['Total Pay']):
+			current_week = df.loc[i]
+
+	if current_week['Total Pay'] == "$0.00":
+		print("NO MONEY!")
+	print("FOUND CURRENT WEEK!")
+	return current_week
+	
+def lambda_handler(event, context):
+	current_week = mydoc()
+	work_week = current_week['Work Week']
+	Dates = current_week['Dates']
+	Total_Hours = current_week['Total Hours']
+	Total_Pay = current_week['Total Pay']
+			
+	hook_url = os.environ["webhook"]                  
+	payload = {	
+		"blocks": [
+			{
+				"type": "header",
+				"text": {
+					"type": "plain_text",
+					"text": "Pay Roll Alert\n"
+				}
+			},
+			{
+				"type": "section",
+				"fields": [
+					{
+					"type": "mrkdwn",
+					"text": "For Connor Werdel"
+				}
+				]
+			},
+			{
+				"type": "section",
+				"fields": [
+					{
+						"type": "mrkdwn",
+						"text": f"*Work Week:*\n {work_week} {Dates}"
+					}
+				]
+			},
+			{
+				"type": "section",
+				"fields": [
+					{
+						"type": "mrkdwn",
+						"text": f"*Total Hours: *\n {Total_Hours}"
+					}
+				]
+			},
+			{
+				"type": "section",
+				"fields": [
+					{
+						"type": "mrkdwn",
+						"text": f"*Paid Amount:*\n{Total_Pay}"
+					}
+				]
+			},
+			{
+				"type": "section",
+				"text": {
+					"type": "mrkdwn",
+					"text": f"*Pay Roll Sheet:*\n<https://docs.google.com/spreadsheets/d/{gsheetid}/edit#gid=1445946700|Link>"
+				}
+			}
+		]
+	}
+
+	encoded_data = json.dumps(payload).encode('utf-8')
+	r = http.request( 
+		'POST',
+		hook_url,
+		body=encoded_data,
+		headers={'Content-Type': 'application/json'})
+
+if __name__ == "__main__":
+	lambda_handler(None, None)
