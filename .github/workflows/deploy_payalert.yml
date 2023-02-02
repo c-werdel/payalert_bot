@@ -22,7 +22,7 @@ jobs:
           role-session-name: MySessionName
       - name: zip lambda_payalert
         run: |
-          zip -r9 lambda.zip lambda_greeting.py
+          zip -r9 lambda.zip lambda_payalert.py
       - name: AWS Deploy
         run: |
           aws lambda update-function-code --function-name arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification --zip-file fileb://lambda.zip
