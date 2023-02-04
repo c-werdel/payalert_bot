@@ -97,20 +97,6 @@ def lambda_handler(event, context):
 		hook_url,
 		body=encoded_data,
 		headers={'Content-Type': 'application/json'})
-
-client = boto3.client('scheduler',  region_name='us-east-1')
-response = client.update_schedule(
-    FlexibleTimeWindow={
-        'Mode': 'OFF'
-    },
-    Name='payalert_reminder', 
-    ScheduleExpression='cron(30 * * * ? *)',
-    State='DISABLED',
-    Target= {
-        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
-        'RoleArn': 'arn:aws:iam::297098627551:role/service-role/Amazon_EventBridge_Scheduler_LAMBDA_payalert_reminder_a330188cab'
-    }
-)
 		
 if __name__ == "__main__":
 	lambda_handler(None, None)
