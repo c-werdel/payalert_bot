@@ -2,6 +2,7 @@ import urllib3
 import pandas as pd
 import json
 import os
+import boto3
 http = urllib3.PoolManager()
 
 gsheetid = os.environ["gsheetid"]
@@ -33,7 +34,7 @@ def lambda_handler(event, context):
 	Total_Hours = current_week['Total Hours']
 	Total_Pay = current_week['Total Pay']
 			
-	hook_url = os.environ["webhook"]                  
+	hook_url = os.environ["webhook"]                   
 	payload = {	
 		"blocks": [
 			{
@@ -85,9 +86,23 @@ def lambda_handler(event, context):
 					"type": "mrkdwn",
 					"text": f"*Pay Roll Sheet:*\n<https://docs.google.com/spreadsheets/d/{gsheetid}/edit#gid=1445946700|Link>"
 				}
-			}
-		]
-	}
+			},
+			{
+			"type": "actions",
+			"block_id": "actionblock789",
+			"elements": [
+				{
+					"type": "button",
+					"text": {
+						"type": "plain_text",
+						"text": "Pay complete, turn off notification"
+					},
+					"url": "https://e2xyunjpxh.execute-api.us-east-1.amazonaws.com" #url link from API GATEWAY CONNECTION? to use maybe
+				}             
+			]            
+		}
+	]
+}
 
 	encoded_data = json.dumps(payload).encode('utf-8')
 	r = http.request( 
@@ -95,6 +110,20 @@ def lambda_handler(event, context):
 		hook_url,
 		body=encoded_data,
 		headers={'Content-Type': 'application/json'})
+
+client = boto3.client('scheduler',  region_name='us-east-1')
+response = client.update_schedule(
+    FlexibleTimeWindow={
+        'Mode': 'OFF'
+    },
+    Name='payalert_reminder', 
+    ScheduleExpression='cron(30 * * * ? *)',
+    State='DISABLED',
+    Target= {
+        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
+        'RoleArn': 'arn:aws:iam::297098627551:role/service-role/Amazon_EventBridge_Scheduler_LAMBDA_payalert_reminder_a330188cab'
+    }
+)
 
 if __name__ == "__main__":
 	lambda_handler(None, None)
