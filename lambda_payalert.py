@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import os
 import boto3
+
 http = urllib3.PoolManager()
 
 gsheetid = os.environ["gsheetid"]
@@ -28,12 +29,33 @@ def mydoc():
 	return current_week
 	
 def lambda_handler(event, context):
-	current_week = mydoc()
-	work_week = current_week['Work Week']
-	Dates = current_week['Dates']
-	Total_Hours = current_week['Total Hours']
-	Total_Pay = current_week['Total Pay']
-			
+	worked = False
+	lookid = os.environ["lookid"]
+
+	try: 
+		api_event = event['requestContext']['domainName']
+		if api_event == lookid:
+				worked = True
+	except:
+		pass
+
+	if worked:
+		#Do only the schedule call to DISABLED nothing more!
+		response = client.update_schedule(
+			FlexibleTimeWindow={
+				'Mode': 'OFF'
+			},
+		Name='payalert_reminder', 
+		ScheduleExpression='cron(30 * * * ? *)',
+		State='DISABLED',
+		)
+	else: 
+		current_week = mydoc()
+		work_week = current_week['Work Week']
+		Dates = current_week['Dates']
+		Total_Hours = current_week['Total Hours']
+		Total_Pay = current_week['Total Pay']
+
 	hook_url = os.environ["webhook"]                   
 	payload = {	
 		"blocks": [
@@ -95,14 +117,15 @@ def lambda_handler(event, context):
 					"type": "button",
 					"text": {
 						"type": "plain_text",
-						"text": "Pay complete, turn off notification"
+						"text": "Payment complete"
 					},
-					"url": "https://e2xyunjpxh.execute-api.us-east-1.amazonaws.com" #url link from API GATEWAY CONNECTION? to use maybe
+					"style": "primary",
+					"value": "click_me_123"
 				}             
 			]            
-		}
-	]
-}
+			}
+		]
+	}
 
 	encoded_data = json.dumps(payload).encode('utf-8')
 	r = http.request( 
@@ -111,19 +134,19 @@ def lambda_handler(event, context):
 		body=encoded_data,
 		headers={'Content-Type': 'application/json'})
 
-client = boto3.client('scheduler',  region_name='us-east-1')
-response = client.update_schedule(
-    FlexibleTimeWindow={
-        'Mode': 'OFF'
-    },
-    Name='payalert_reminder', 
-    ScheduleExpression='cron(30 * * * ? *)',
-    State='DISABLED',
-    Target= {
-        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
-        'RoleArn': 'arn:aws:iam::297098627551:role/service-role/Amazon_EventBridge_Scheduler_LAMBDA_payalert_reminder_a330188cab'
-    }
-)
+	client = boto3.client('scheduler',  region_name='us-east-1')
+	response = client.update_schedule(
+	    FlexibleTimeWindow={
+	        'Mode': 'OFF'
+	    },
+	    Name='payalert_reminder', 
+	    ScheduleExpression='cron(30 * * * ? *)',
+	    State='DISABLED',
+	    Target= {
+	        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
+	        'RoleArn': 'arn:aws:iam::297098627551:role/service-role/Amazon_EventBridge_Scheduler_LAMBDA_payalert_reminder_a330188cab'
+	    }
+	)
 
 if __name__ == "__main__":
 	lambda_handler(None, None)
