@@ -46,7 +46,7 @@ def lambda_handler(event, context):
 	        'Mode': 'OFF'
 	    },
 	    Name='payalert_reminder', 
-	    ScheduleExpression='cron(30 * * * ? *)',
+	    ScheduleExpression='cron(*/15 * * * ? *)',
 	    State='DISABLED',
 	    Target= {
 	        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
@@ -144,7 +144,7 @@ def lambda_handler(event, context):
 		        'Mode': 'OFF'
 		    },
 		    Name='payalert_reminder', 
-		    ScheduleExpression='cron(30 * * * ? *)',
+		    ScheduleExpression='cron(*/15 * * * ? *)',
 		    State='ENABLED',
 		    Target= {
 		        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
