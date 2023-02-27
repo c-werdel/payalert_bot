@@ -14,4 +14,4 @@ information from the current week found is displayed in a slack block.
 * Takes current dates information and displays it in a slack_block
 * Using Lambdas to integrate the script into AWS services
 * AWS Event Bridge was set up to run the script at specific time every week to notify payment needs to be made
-* Continue integrate is set up using GitHub runners
+* CD is set up using GitHub runners
