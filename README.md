@@ -1,4 +1,4 @@
-# Weekly Pay_ALert slack_bot using Python and AWS Services
+# Weekly Pay_Alert slack_bot using Python and AWS Services
 
 
 ## A pay notification bot for Slack using Lambda and AWS Services
