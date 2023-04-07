@@ -54,6 +54,7 @@ def lambda_handler(event, context):
 	    }
 	    print("Alarm Turned off")
 	)
+	print("Thank you, Alarm off.")
 	else: 
 		current_week = mydoc()
 		work_week = current_week['Work Week']
