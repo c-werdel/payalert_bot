@@ -52,7 +52,6 @@ def lambda_handler(event, context):
 	        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
 	        'RoleArn': 'arn:aws:iam::297098627551:role/service-role/Amazon_EventBridge_Scheduler_LAMBDA_payalert_reminder_a330188cab'
 	    }
-	    print("Alarm Turned off")
 	)
 	print("Thank you, 15 min Alarm deactivated.")
 	else: 
