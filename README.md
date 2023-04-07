@@ -1,17 +1,51 @@
-# Weekly Pay_Alert slack_bot using Python and AWS Services
+# Slack Payroll Notification Bot
+This AWS Lambda function sends a notification to a Slack channel with the current week's payroll information. It also toggles an AWS EventBridge scheduler on and off.
 
 
-## A pay notification bot for Slack using Lambda and AWS Services
+## Functionality
 
-This project uses a python script that has been integrated into AWS lambda. The script reads an excel spread sheet with punch in and punch out times-
-recording days and hours worked. Using pandas this script is read into the script and prints the recent pay week. It does this by finding the current week. 
-If it finds the current week it will print the current weeks hours worked, what week it is and the total pay for the hours worked. Additionally there is a try catch that will- determine if the current week has been worked or if it has not and will know to skip that week when searching for current week. Lastly there is a slack block where the information from the current week found is displayed in a slack block. There is a second event bridge set up that will continue alerting that this weeks pay is due until the user turns off the button labled payment complete turning off the second alarm
+  1. If triggered by an AWS EventBridge scheduler with a matching domain name (as specified by the "lookid" environment variable), the function turns off the scheduler and prints a message to the console.
 
-* Uses pandas to read an excel spreadsheet and take the current information from it
-* Will skip weeks where not information is recorded
-* Takes current dates information and displays it in a slack_block
-* Using Lambdas to integrate the script into AWS services
-* AWS Event Bridge was set up to run the script at specific time every week to notify payment needs to be made
-* CD is set up using GitHub runners
+  2. If triggered by any other means, the function reads the current week's payroll information from a Google Sheet (as specified by the "gsheetid" environment variable) and formats a message payload to send to a Slack webhook (as specified by the "webhook" environment variable). The payload includes the following information:
+  *Work week and dates
+  *Total hours worked
+  *Total pay received
+  *Link to the Google Sheet
+  *Button to mark payment as complete
+  *The function sends the payload to the Slack webhook and prints a message to the console.
+  3. The function turns on an AWS EventBridge scheduler to trigger the function again in 15 minutes.
+  4. The function turns on an AWS EventBridge scheduler to trigger the function again in 15 minutes.
+
+## Requirements
+
+## Setup
+1. Clone or download the code repository.
+2. Create a virtual environment for the project, activate it, and install the required packages:
+3. Create an IAM role for the Lambda function with the following permissions:
+  *AWSLambdaBasicExecutionRole
+  *AmazonSSMReadOnlyAccess
+  *AmazonEventBridgeFullAccess
+  *CloudWatchLogsFullAccess
+  *AmazonS3FullAccess (if using S3 to store the code package)
+4. Create a Slack webhook and copy its URL.
+5. Create a Google Sheet and share it with the service account associated with the IAM role created in step 3.
+6. Create an AWS EventBridge scheduler with a cron expression of cron(*/15 * * * ? *) and a target of this Lambda function. Set the name of the scheduler to payalert_reminder.
+7. Create an S3 bucket (optional) and upload the code package to it:
+8. Create the Lambda function with the following settings:
+  *Runtime: Python 3.x
+  *Handler: lambda_function.lambda_handler
+  *Role: the IAM role created in step 3
+  *Code source: either an S3 bucket or a ZIP file (if using the former, enter the S3 URL in the "Code source" field; if using the latter, upload the ZIP file directly)
+  *Environment variables:
+    * 'gsheetid': the ID of the Google Sheet (found in the URL)
+    *'webhook': the URL of the Slack webhook
+    *'lookid': the domain name to match with the AWS EventBridge scheduler (optional)
+  *Timeout: 1 minute (recommended)
+  *Memory: 128 MB (minimum)
+ 9. Test the function by triggering it manually from the Lambda console or the AWS CLI:
+
+  
+
+
 
 
