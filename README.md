@@ -4,19 +4,23 @@ This AWS Lambda function sends a notification to a Slack channel with the curren
 
 ## Functionality
 
-  1. If triggered by an AWS EventBridge scheduler with a matching domain name (as specified by the "lookid" environment variable), the function turns off the scheduler and prints a message to the console.
+1. If triggered by an AWS EventBridge scheduler with a matching domain name (as specified by the "lookid" environment variable), the function turns off the scheduler and prints a message to the console.
 
-  2. If triggered by any other means, the function reads the current week's payroll information from a Google Sheet (as specified by the "gsheetid" environment variable) and formats a message payload to send to a Slack webhook (as specified by the "webhook" environment variable). The payload includes the following information:
+2. If triggered by any other means, the function reads the current week's payroll information from a Google Sheet (as specified by the "gsheetid" environment variable) and formats a message payload to send to a Slack webhook (as specified by the "webhook" environment variable). The payload includes the following information:
   *Work week and dates
   *Total hours worked
   *Total pay received
   *Link to the Google Sheet
   *Button to mark payment as complete
   *The function sends the payload to the Slack webhook and prints a message to the console.
-  3. The function turns on an AWS EventBridge scheduler to trigger the function again in 15 minutes.
-  4. The function turns on an AWS EventBridge scheduler to trigger the function again in 15 minutes.
+3. The function turns on an AWS EventBridge scheduler to trigger the function again in 15 minutes.
+4. The function turns on an AWS EventBridge scheduler to trigger the function again in 15 minutes.
 
 ## Requirements
+*Python 3.x
+*AWS CLI
+*An AWS account with sufficient permissions to create and manage Lambda functions, IAM roles, EventBridge schedulers, and CloudWatch Logs.
+*A Slack account with sufficient permissions to create and manage webhooks.
 
 ## Setup
 1. Clone or download the code repository.
