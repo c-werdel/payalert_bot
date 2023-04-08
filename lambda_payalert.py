@@ -137,24 +137,25 @@ def lambda_handler(event, context):
 
 	encoded_data = json.dumps(payload).encode('utf-8')
         r = http.request( 
-            'POST',
-            hook_url,
-            body=encoded_data,
-            headers={'Content-Type': 'application/json'})
+		'POST',
+		hook_url,
+		body=encoded_data,
+		headers={'Content-Type': 'application/json'}
+	)
 
-        client = boto3.client('scheduler',  region_name='us-east-1')
-        response = client.update_schedule(
-            FlexibleTimeWindow={
-		        'Mode': 'OFF'
-		    },
-		    Name='payalert_reminder', 
-		    ScheduleExpression='cron(*/15 * * * ? *)',
-		    State='ENABLED',
-		    Target= {
-		        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
-		        'RoleArn': 'arn:aws:iam::297098627551:role/service-role/Amazon_EventBridge_Scheduler_LAMBDA_payalert_reminder_a330188cab'
-		    }
-		)
+	client = boto3.client('scheduler', region_name='us-east-1')
+	response = client.update_schedule(
+		FlexibleTimeWindow={
+			'Mode': 'OFF'
+		},
+		Name='payalert_reminder', 
+		ScheduleExpression='cron(*/15 * * * ? *)',
+		State='ENABLED',
+		Target={
+			'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
+			'RoleArn': 'arn:aws:iam::297098627551:role/service-role/Amazon_EventBridge_Scheduler_LAMBDA_payalert_reminder_a330188cab'
+		}
+	)
 
 if __name__ == "__main__":
 	lambda_handler(None, None)
