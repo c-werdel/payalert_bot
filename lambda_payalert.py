@@ -51,8 +51,9 @@ def lambda_handler(event, context):
 	    Target= {
 	        'Arn': 'arn:aws:lambda:us-east-1:297098627551:function:Slack_payroll_notification',
 	        'RoleArn': 'arn:aws:iam::297098627551:role/service-role/Amazon_EventBridge_Scheduler_LAMBDA_payalert_reminder_a330188cab'
-	    }
+	    }		
 	)
+	print("Thank you, 15 min Alarm deactivated.")	
 	
 	else: 
 		current_week = mydoc()
