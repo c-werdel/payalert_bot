@@ -131,14 +131,7 @@ def lambda_handler(event, context):
 				    "value": "click_me_123"
 				}
 			    ]
-			},
-			{
-			    "type": "section",
-			    "text": {
-				"type": "mrkdwn",
-				"text": "The second trigger has been turned off."
-			    }
-			}	                
+			},		
 		    ]
 		}
 		
