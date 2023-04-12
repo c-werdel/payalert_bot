@@ -131,7 +131,7 @@ def lambda_handler(event, context):
 				    "value": "click_me_123"
 				}
 			    ]
-			},		
+			}	
 		    ]
 		}
 		
