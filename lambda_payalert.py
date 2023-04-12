@@ -129,12 +129,19 @@ def lambda_handler(event, context):
 				    },
 				    "style": "primary",
 				    "value": "click_me_123"
-				}             
-			    ]            
-			}
+				}
+			    ]
+			},
+			{
+			    "type": "section",
+			    "text": {
+				"type": "mrkdwn",
+				"text": "The second trigger has been turned off."
+			    }
+			}	                
 		    ]
 		}
-
+		
 	encoded_data = json.dumps(payload).encode('utf-8')
         r = http.request( 
 		'POST',
