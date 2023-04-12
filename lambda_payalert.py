@@ -56,7 +56,18 @@ def lambda_handler(event, context):
 		    }
 		)
 		print("Thank you, 15 min Alarm deactivated.")
-		
+		# Send the message to Slack
+        	hook_url = os.environ["webhook"]
+        	payload = {
+            		"text": "Thank you, 15 min Alarm deactivated."
+        	}
+        	encoded_data = json.dumps(payload).encode('utf-8')
+        	r = http.request( 
+			'POST',
+			hook_url,
+			body=encoded_data,
+			headers={'Content-Type': 'application/json'}
+		)	
 	else:
 		current_week = mydoc()
 		work_week = current_week['Work Week']
